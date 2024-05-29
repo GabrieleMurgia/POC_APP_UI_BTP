@@ -1,0 +1,65 @@
+<mvc:View controllerName="project1.controller.Master"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core" 
+    xmlns="sap.m">
+    <Page id="masterPage" title="{i18n>masterTitle}" titleAlignment="Center">
+        <Bar id="topBar">
+            <contentRight>
+                <Select id="topSelect">
+                    <core:Item text="Segnalatore" key="segnalatore" id="itemSegnalatore"/>
+                    <core:Item text="Titolo" key="nomeProgettoPotenziale" id="itemTitolo"/>
+                    <core:Item text="Cliente" key="nomeProspect" id="itemCliente"/>
+                </Select>
+            </contentRight>
+            <contentLeft>
+                <SearchField id="searchField"/>
+            </contentLeft>
+        </Bar>
+        <content>
+            <List id="list" mode="SingleSelectMaster" select="onSelectionChange">
+                <items>
+                    <ObjectListItem id="item1" title="Item 1" type="Active">
+                        <attributes>
+                            <ObjectAttribute id="attr1" title="Detail" text="More info about Item 1"/>
+                        </attributes>
+                        <firstStatus>
+                            <ObjectStatus id="status1" text="Active" state="Success"/>
+                        </firstStatus>
+                    </ObjectListItem>
+                    <ObjectListItem id="item2" title="Item 2" type="Active">
+                        <attributes>
+                            <ObjectAttribute id="attr2" title="Detail" text="More info about Item 2"/>
+                        </attributes>
+                        <firstStatus>
+                            <ObjectStatus id="status2" text="Pending" state="Warning"/>
+                        </firstStatus>
+                    </ObjectListItem>
+                    <ObjectListItem id="item3" title="Item 3" type="Active">
+                        <attributes>
+                            <ObjectAttribute id="attr3" title="Detail" text="More info about Item 3"/>
+                        </attributes>
+                        <firstStatus>
+                            <ObjectStatus id="status3" text="Inactive" state="Error"/>
+                        </firstStatus>
+                    </ObjectListItem>
+                </items>
+            </List>
+        </content>
+        <footer>
+            <Bar id="footerBar">
+                <contentLeft>
+                    <core:Icon src="sap-icon://sort-descending" id="sortIcon"/>
+                    <Select id="footerSelect">
+                        <core:Item text="Stato" key="stato" id="footerItemStato"/>
+                        <core:Item text="Segnalatore" key="segnalatore" id="footerItemSegnalatore"/>
+                        <core:Item text="Valore" key="valorePotenzialeProgetto" id="footerItemValore"/>
+                        <core:Item text="Cliente" key="nomeProspect" id="footerItemCliente"/>
+                    </Select>
+                </contentLeft>
+                <contentRight>
+                    <Button id="addButton" icon="sap-icon://add"/>
+                </contentRight>
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

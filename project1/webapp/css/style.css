@@ -1,0 +1,52 @@
+/* Enter your custom styles here */
+.sapMObjectNumber{
+    font-size: 1.375rem!important;
+    min-width: 212px!important;;
+}
+
+.sapMObjectNumberUnit {
+     font-size: 1.44rem!important;
+     min-width: 1.44rem!important;
+}
+
+.HBoxToolTIP > div:first-child{
+    width: 95%!important;
+}
+
+.red > div > .sapMObjLTopRow{
+    .sapMObjLIconDiv  span{
+        color: red!important;
+    }
+}
+.green > div > .sapMObjLTopRow{
+    .sapMObjLIconDiv  span{
+        color: green!important
+    }
+}
+
+.orange > div > .sapMObjLTopRow{
+    .sapMObjLIconDiv  span{
+        color: orange!important
+    }
+}
+
+
+.oAppGestioneOp{
+
+    .sapMPageHeader{
+    }
+    .oPageDetailGO{
+        .sapUiSimpleForm{
+            display: flex;
+            justify-content: center;
+        }
+        .sapUiSimpleForm > div{
+           width: 60%;
+        }
+
+        section{
+        background: linear-gradient(270deg, rgb(215 248 255) 61%, rgb(0, 254, 255) 100%) !important;
+        }
+    }
+    
+}

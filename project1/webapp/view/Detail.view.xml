@@ -1,0 +1,66 @@
+<mvc:View controllerName="project1.controller.Detail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:form="sap.ui.layout.form"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Page id="detailPage" title="{i18n>detailTitle}" titleAlignment="Center">
+        <content>
+            <form:SimpleForm id="formDetail" editable="true" layout="ResponsiveGridLayout">
+                <form:content>
+                    <!-- Segnalatore -->
+                    <Label text="Segnalatore" id="labelSegnalatore"/>
+                    <Input id="inputSegnalatore" value="{/segnalatore}"/>
+
+                    <!-- Nome Prospect -->
+                    <Label text="Nome Prospect" id="labelNomeProspect"/>
+                    <Input id="inputNomeProspect" value="{/nomeProspect}"/>
+
+                    <!-- Indirizzo Prospect -->
+                    <Label text="Indirizzo Prospect" id="labelIndirizzoProspect"/>
+                    <Input id="inputIndirizzoProspect" value="{/indirizzoProspect}"/>
+
+                    <!-- Nome Progetto Potenziale -->
+                    <Label text="Nome Progetto Potenziale" id="labelNomeProgettoPotenziale"/>
+                    <Input id="inputNomeProgettoPotenziale" value="{/nomeProgettoPotenziale}"/>
+
+                    <!-- Tipologia -->
+                    <Label text="Tipologia" id="labelTipologia"/>
+                    <Select id="selectTipologia">
+                        <core:Item key="A" text="Type A" id="itemTypeA"/>
+                        <core:Item key="B" text="Type B" id="itemTypeB"/>
+                    </Select>
+
+                    <!-- Tipologia Dettaglio -->
+                    <Label text="Tipologia Dettaglio" id="labelTipologiaDettaglio"/>
+                    <Select id="selectTipologiaDettaglio">
+                        <core:Item key="C" text="Detail C" id="itemDetailC"/>
+                        <core:Item key="D" text="Detail D" id="itemDetailD"/>
+                    </Select>
+
+                    <!-- Valore Potenziale Progetto -->
+                    <Label text="Valore Potenziale Progetto" id="labelValorePotenzialeProgetto"/>
+                    <Input id="inputValorePotenzialeProgetto" value="{/valorePotenzialeProgetto}"/>
+
+                    <!-- Data Chiusura Prevista -->
+                    <Label text="Data Chiusura Prevista" id="labelDataChiusuraPrevista"/>
+                    <DatePicker id="inputDataChiusuraPrevista" value="{/dataChiusuraPrevista}"/>
+
+                    <!-- Probabilità Chiusura -->
+                    <Label text="Probabilità Chiusura" id="labelProbabilitaChiusura"/>
+                    <Input id="inputProbabilitaChiusura" value="{/probabilitaChiusura}"/>
+
+                    <!-- More fields can be added below following the same pattern -->
+                </form:content>
+            </form:SimpleForm>
+        </content>
+
+        <footer>
+            <Bar id="footerBarDetail">
+                <contentMiddle>
+                    <Button id="buttonSave" type="Accept" text="Save" press="onSave"/>
+                    <Button id="buttonCancel" type="Transparent" text="Cancel" press="onCancel"/>
+                </contentMiddle>
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>
