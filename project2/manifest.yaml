@@ -1,0 +1,9 @@
+---
+applications:
+  - name: project2 # Sostituisci con il nome della tua app
+    memory: 256M
+    buildpacks:
+      - nodejs_buildpack
+    command: node dist/server.js
+    env:
+      NODE_ENV: production

@@ -1,0 +1,62 @@
+<mvc:View controllerName="project3.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m">
+    <Page id="page">
+        <customHeader>
+            <Toolbar id="toolbar1">
+                <ToolbarSpacer id="spacerToolbarStart"/>
+                <Title id="pageTitle" text="{i18n>title}" />
+                <ToolbarSpacer id="spacerToolbarEnd"/>
+            </Toolbar>
+        </customHeader>
+        <content>
+            <Table id="myTable" inset="false" items="{/ZTEST_CORSO_SC}" growing="true">
+                <headerToolbar>
+                    <Toolbar id="headerToolbar">
+                        <ToolbarSpacer id="spacerToolbarStart2"/>
+                        <Title id="tableTitle" text="Ordini di Vendita" />
+                        <ToolbarSpacer id="spacerToolbarEnd2"/>
+                    </Toolbar>
+                </headerToolbar>
+                <columns>
+                    <Column id="columnDocVendita">
+                        <VBox id="vBoxDocVendita">
+                            <Text id="textDocVendita" text="Doc. vendita" />
+                            <HBox id="hBoxDocVendita">
+                                <Button id="btnSortDocVendita" icon="sap-icon://sort" press="onSortPress" visible="false" />
+                                <Button id="btnFilterDocVendita" icon="sap-icon://filter" press="onFilterPress" visible="false"/>
+                            </HBox>
+                        </VBox>
+                    </Column>
+                    <Column id="columnDataCreazione">
+                        <VBox id="vBoxDataCreazione">
+                            <Text id="textDataCreazione" text="Data creazione" />
+                            <HBox id="hBoxDataCreazione">
+                                <Button id="btnSortDataCreazione" icon="sap-icon://sort" press="onSortPress" visible="false"/>
+                                <Button id="btnFilterDataCreazione" icon="sap-icon://filter" press="onFilterPress" visible="false"/>
+                            </HBox>
+                        </VBox>
+                    </Column>
+                    <Column id="columnErnam">
+                        <VBox id="vBoxErnam">
+                            <Text id="textErnam" text="Creato da" />
+                            <HBox id="hBoxErnam">
+                                <Button id="btnSortErnam" icon="sap-icon://sort" press="onSortPress" visible="false"/>
+                                <Button id="btnFilterErnam" icon="sap-icon://filter" press="onFilterPress" visible="false"/>
+                            </HBox>
+                        </VBox>
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem id="columnListItemTemplate">
+                        <cells>
+                            <Text id="cellDocVendita" text="{Vbeln}" />
+                            <Text id="cellDataCreazione" text="{ path: 'Erdat', formatter: '.formatDate' }" />
+                            <Text id="cellErnam" text="{Ernam}" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>
