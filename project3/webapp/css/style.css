@@ -1,1 +1,34 @@
-/* Enter your custom styles here */
+/* style.css */
+
+.pageTitle {
+    color: #007eb5 !important; /* Blue color from the logo */
+    font-weight: bold !important;
+}
+
+.headerToolbar, .footerToolbar {
+    background-color: #f2f2f2 !important; /* Light grey background */
+}
+
+.tableTitle {
+    color: #007eb5!important;  /* Blue color from the logo */
+}
+
+.myTable{
+
+}
+
+.myTable .sapMListTblCell {
+    background-color: #ffffff!important;  /* White background for table cells */
+}
+
+.myTable .sapMLIB {
+    border-bottom: 1px solid #e0e0e0 !important;/* Light grey border for table rows */
+}
+
+section{
+    overflow: hidden auto;
+    border: 1px solid #77def0;
+    background: #dffbff;
+}
+
+

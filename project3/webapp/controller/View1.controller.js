@@ -7,144 +7,121 @@ sap.ui.define([
     "sap/m/Input",
     "sap/m/Text",
     "sap/ui/model/json/JSONModel",
-],
- function (Controller, Sorter, Dialog, Button, Input, Text,JSONModel) {
+    "sap/m/Select",
+    "sap/m/Label",
+    "sap/m/SelectList",
+    "sap/ui/core/Item"
+], function (Controller, ODataModel, Sorter, Dialog, Button, Input, Text, JSONModel, Select, Label, SelectList, Item) {
     "use strict";
 
     return Controller.extend("project3.controller.View1", {
         onInit: function () {
-              // Ottieni il modello OData dal componente
-              var oJSONModelODV = new JSONModel();
+            // Set the OData model
+            let oDataModel = new ODataModel("/sap/opu/odata/sap/ztest_corsosc_srv/");
+            this.getView().setModel(oDataModel);
 
-            // Ottieni il modello dal componente
-            var oModel = this.getOwnerComponent().getModel();
+            // Create and set JSON model for view data
+            let oJSONModelODV = new JSONModel();
+            this.getView().setModel(oJSONModelODV, "jsonModelODV");
+
+            // Initialize filter dialog
+            this._initializeFilterDialog();
+
+            // Fetch initial data
+            /* this._fetchData(); */
+            this._filterDialog.open();
+        },
+
+        _fetchData: function () {
+            let oModel = this.getView().getModel();
+            oModel.read("/ZTEST_CORSO_SC", {
+                success: function (oData) {
+                    let oJSONModelODV = this.getView().getModel("jsonModelODV");
+                    oJSONModelODV.setData(oData);
+                }.bind(this),
+                error: function (oError) {
+                    console.error("Errore nel recuperare i dati: ", oError);
+                }
+            });
+        },
+
+        onFilterButtonPress: function () {
+            this._filterDialog.open();
+        },
+
+        _initializeFilterDialog: function () {
+            // Check if the dialog already exists
+            if (!this._filterDialog) {
+                this._filterDialog = new sap.m.Dialog({
+                    title: "Scegli un filtro",
+                    content: new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({ text: "Scegli il campo di filtro:" }),
+                            new sap.m.Select("filterSelect", {
+                                items: [
+                                    new sap.ui.core.Item({ key: "Ernam", text: "Creato Da" }),
+                                    new sap.ui.core.Item({ key: "Erdat", text: "Data Creazione" })
+                                ]
+                            }),
+                            new sap.m.Label({ text: "Inserisci il valore del filtro:" }),
+                            new sap.m.Input("filterValue")
+                        ]
+                    }),
+                    beginButton: new sap.m.Button({
+                        text: "Applica",
+                        press: function () {
+                            let sFilterField = sap.ui.getCore().byId("filterSelect").getSelectedKey();
+                            let sFilterValue = sap.ui.getCore().byId("filterValue").getValue();
+                            this._applyODataFilter(sFilterField, sFilterValue);
+                            this._filterDialog.close();
+                        }.bind(this)
+                    }),
+                    endButton: new sap.m.Button({
+                        text: "Annulla",
+                        press: function () {
+                            this._filterDialog.close();
+                        }.bind(this)
+                    })
+                });
+            }
+        },
+
+        _applyODataFilter: function (sFilterField, sFilterValue) {
+            let oModel = this.getView().getModel();
             if (oModel) {
+                let aFilters = [];
+                if (sFilterField && sFilterValue) {
+                    aFilters.push(new sap.ui.model.Filter(sFilterField, sap.ui.model.FilterOperator.Contains, sFilterValue));
+                }
+
                 oModel.read("/ZTEST_CORSO_SC", {
+                    filters: aFilters,
                     success: function (oData) {
-                        console.log(oData); // Visualizza i dati nella console
-                        oJSONModelODV.setData({ ZTEST_CORSO_SC: oData.results });
-                        this.getView().setModel(oJSONModelODV, "jsonModelODV");
-                        
-                    },
+                        let oJSONModelODV = this.getView().getModel("jsonModelODV");
+                        if (oJSONModelODV) {
+                            oJSONModelODV.setData(oData);
+                        } else {
+                            console.error("Modello JSON 'jsonModelODV' non trovato");
+                        }
+                    }.bind(this),
                     error: function (oError) {
                         console.error("Errore nel recuperare i dati: ", oError);
-                        
                     }
                 });
             } else {
                 console.error("Modello OData non trovato");
             }
         },
+
         /* Formatter per date */
         formatDate: function(date) {
             if (!date) {
                 return "";
             }
-            var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+            let oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
                 pattern: "dd/MM/yyyy"
             });
             return oDateFormat.format(new Date(date));
-        },
-        onSortPress: function (oEvent) {
-            var sColumnId = oEvent.getSource().getId();
-            var sSortOrder = this._getSortOrder(sColumnId);
-            var sPath = this._getColumnPath(sColumnId);
-            var bDescending = sSortOrder === "Descending";
-            this._sortTableData(sPath, bDescending);
-            this._toggleSortIcon(sColumnId, bDescending);
-        },
-        _sortTableData: function (sPath, bDescending) {
-            var oModel = this.getView().getModel("jsonModelODV");
-            var aData = oModel.getProperty("/ZTEST_CORSO_SC");
-
-            aData.sort(function (a, b) {
-                var valueA = a[sPath];
-                var valueB = b[sPath];
-                if (valueA < valueB) {
-                    return bDescending ? 1 : -1;
-                }
-                if (valueA > valueB) {
-                    return bDescending ? -1 : 1;
-                }
-                return 0;
-            });
-
-            oModel.setProperty("/ZTEST_CORSO_SC", aData);
-        },
-
-        onFilterPress: function (oEvent) {
-            var sColumnId = oEvent.getSource().getId();
-            this._currentFilterColumn = sColumnId;
-            if (!this._oDialog) {
-                this._oDialog = new Dialog({
-                    title: "Filter",
-                    content: [
-                        new Text({ text: "Enter filter value:" }),
-                        new Input({ id: "filterInput" })
-                    ],
-                    beginButton: new Button({
-                        text: "Apply",
-                        press: this._applyFilter.bind(this)
-                    }),
-                    endButton: new Button({
-                        text: "Cancel",
-                        press: function () {
-                            this._oDialog.close();
-                        }.bind(this)
-                    })
-                });
-            }
-            this._oDialog.open();
-        },
-
-        _applyFilter: function () {
-            var sValue = sap.ui.getCore().byId("filterInput").getValue();
-            var sPath = this._getColumnPath(this._currentFilterColumn);
-            var oTable = this.byId("myTable");
-            var oBinding = oTable.getBinding("items");
-            var aFilters = [];
-            if (sValue) {
-                aFilters.push(new sap.ui.model.Filter(sPath, sap.ui.model.FilterOperator.Contains, sValue));
-            }
-            oBinding.filter(aFilters);
-            this._oDialog.close();
-        },
-
-        _getSortOrder: function (sColumnId) {
-            var oButton = this.byId(sColumnId);
-            var sIcon = oButton.getIcon();
-            if (sIcon === "sap-icon://sort") {
-                return "Ascending";
-            } else if (sIcon === "sap-icon://sort-ascending") {
-                return "Descending";
-            } else {
-                return "Ascending";
-            }
-        },
-
-        _getColumnPath: function (sColumnId) {
-            switch (sColumnId) {
-                case "btnSortDocVendita":
-                case "btnFilterDocVendita":
-                    return "Vbeln";
-                case "btnSortDataCreazione":
-                case "btnFilterDataCreazione":
-                    return "Erdat";
-                case "btnSortErnam":
-                case "btnFilterErnam":
-                    return "Ernam";
-                default:
-                    return "";
-            }
-        },
-
-        _toggleSortIcon: function (sColumnId, bDescending) {
-            var oButton = this.byId(sColumnId);
-            if (bDescending) {
-                oButton.setIcon("sap-icon://sort-descending");
-            } else {
-                oButton.setIcon("sap-icon://sort-ascending");
-            }
         }
     });
 });
