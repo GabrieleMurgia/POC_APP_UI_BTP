@@ -102,8 +102,8 @@ sap.ui.define([
         _parseDateFromString: function(dateString) {
             var parts = dateString.split("/");
             if (parts.length === 3) {
-                var month = parseInt(parts[0], 10) - 1;
-                var day = parseInt(parts[1], 10);
+                var month = parseInt(parts[1], 10) - 1; // Mese corretto
+                var day = parseInt(parts[0], 10); // Giorno corretto
                 var year = parseInt(parts[2], 10);
                 if (year < 100) {
                     year += 2000;
@@ -112,7 +112,7 @@ sap.ui.define([
                 var formattedDay = ("0" + date.getDate()).slice(-2);
                 var formattedMonth = ("0" + (date.getMonth() + 1)).slice(-2);
                 var formattedYear = date.getFullYear();
-                return formattedDay + formattedMonth + formattedYear;
+                return formattedYear + "-" + formattedDay + "-" +  formattedMonth 
             } else {
                 return null;
             }
@@ -124,7 +124,7 @@ sap.ui.define([
                 if (sFilterField && sFilterValue) {
                     if (sFilterField === "Erdat") {
                         sFilterValue = this._parseDateFromString(sFilterValue);
-                        aFilters.push(new sap.ui.model.Filter(sFilterField, sap.ui.model.FilterOperator.EQ, sFilterValue));
+                        aFilters.push(new sap.ui.model.Filter(sFilterField, sap.ui.model.FilterOperator.GE, sFilterValue));
                     } else {
                         aFilters.push(new sap.ui.model.Filter(sFilterField, sap.ui.model.FilterOperator.Contains, sFilterValue));
                     }
@@ -148,7 +148,6 @@ sap.ui.define([
                 console.error("Modello OData non trovato");
             }
         },
-
         /* Formatter per date */
         formatDate: function(date) {
             if (!date) {
