@@ -16,19 +16,18 @@ sap.ui.define([
 
     return Controller.extend("project3.controller.View1", {
         onInit: function () {
-            // Set the OData model
+            //OData model
             let oDataModel = new ODataModel("/sap/opu/odata/sap/ztest_corsosc_srv/");
             this.getView().setModel(oDataModel);
 
-            // Create and set JSON model for view data
+            // JSON model
             let oJSONModelODV = new JSONModel();
             this.getView().setModel(oJSONModelODV, "jsonModelODV");
 
             // Initialize filter dialog
             this._initializeFilterDialog();
 
-            // Fetch initial data
-            /* this._fetchData(); */
+            // Open Dialog
             this._filterDialog.open();
         },
 
@@ -52,6 +51,9 @@ sap.ui.define([
         _initializeFilterDialog: function () {
             // Check if the dialog already exists
             if (!this._filterDialog) {
+                this._inputField = new sap.m.Input("filterValue");
+                this._datePicker = new sap.m.DatePicker("filterDate");
+
                 this._filterDialog = new sap.m.Dialog({
                     title: "Scegli un filtro",
                     content: new sap.m.VBox({
@@ -61,17 +63,18 @@ sap.ui.define([
                                 items: [
                                     new sap.ui.core.Item({ key: "Ernam", text: "Creato Da" }),
                                     new sap.ui.core.Item({ key: "Erdat", text: "Data Creazione" })
-                                ]
+                                ],
+                                change: this._onFilterFieldChange.bind(this)
                             }),
                             new sap.m.Label({ text: "Inserisci il valore del filtro:" }),
-                            new sap.m.Input("filterValue")
+                            this._inputField
                         ]
                     }),
                     beginButton: new sap.m.Button({
                         text: "Applica",
                         press: function () {
                             let sFilterField = sap.ui.getCore().byId("filterSelect").getSelectedKey();
-                            let sFilterValue = sap.ui.getCore().byId("filterValue").getValue();
+                            let sFilterValue = (sFilterField === "Erdat") ? this._datePicker.getValue() : this._inputField.getValue();
                             this._applyODataFilter(sFilterField, sFilterValue);
                             this._filterDialog.close();
                         }.bind(this)
@@ -85,15 +88,48 @@ sap.ui.define([
                 });
             }
         },
+        _onFilterFieldChange: function (oEvent) {
+            let sSelectedKey = oEvent.getSource().getSelectedKey();
+            let oVBox = this._filterDialog.getContent()[0];
+            oVBox.removeItem(3); // Remove the current input field or date picker
 
+            if (sSelectedKey === "Erdat") {
+                oVBox.insertItem(this._datePicker, 3); 
+            } else {
+                oVBox.insertItem(this._inputField, 3);
+            }
+        },
+        _parseDateFromString: function(dateString) {
+            var parts = dateString.split("/");
+            if (parts.length === 3) {
+                var month = parseInt(parts[0], 10) - 1;
+                var day = parseInt(parts[1], 10);
+                var year = parseInt(parts[2], 10);
+                if (year < 100) {
+                    year += 2000;
+                }
+                var date = new Date(year, month, day);
+                var formattedDay = ("0" + date.getDate()).slice(-2);
+                var formattedMonth = ("0" + (date.getMonth() + 1)).slice(-2);
+                var formattedYear = date.getFullYear();
+                return formattedDay + formattedMonth + formattedYear;
+            } else {
+                return null;
+            }
+        },
         _applyODataFilter: function (sFilterField, sFilterValue) {
             let oModel = this.getView().getModel();
             if (oModel) {
                 let aFilters = [];
                 if (sFilterField && sFilterValue) {
-                    aFilters.push(new sap.ui.model.Filter(sFilterField, sap.ui.model.FilterOperator.Contains, sFilterValue));
+                    if (sFilterField === "Erdat") {
+                        sFilterValue = this._parseDateFromString(sFilterValue);
+                        aFilters.push(new sap.ui.model.Filter(sFilterField, sap.ui.model.FilterOperator.EQ, sFilterValue));
+                    } else {
+                        aFilters.push(new sap.ui.model.Filter(sFilterField, sap.ui.model.FilterOperator.Contains, sFilterValue));
+                    }
                 }
-
+        
                 oModel.read("/ZTEST_CORSO_SC", {
                     filters: aFilters,
                     success: function (oData) {
